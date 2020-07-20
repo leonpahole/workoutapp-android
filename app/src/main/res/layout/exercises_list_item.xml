@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <TextView
+            android:id="@+id/exercisesListItem_txtTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/muli_extralight"
+            android:text="Pull ups"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp" />
+
+        <ImageView
+            android:id="@+id/exercisesListItem_imgEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@id/exercisesListItem_imgDelete"
+            android:src="@drawable/ic_edit" />
+
+        <ImageView
+            android:id="@+id/exercisesListItem_imgDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_delete" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/exercisesListItem_layoutSets"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+</LinearLayout>

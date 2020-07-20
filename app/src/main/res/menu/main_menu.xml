@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_btnHome"
+            android:icon="@drawable/ic_home"
+            android:title="Home" />
+
+
+        <item
+            android:id="@+id/nav_btnNewWorkout"
+            android:icon="@drawable/ic_workout"
+            android:title="New workout" />
+
+        <item
+            android:id="@+id/nav_btnLogWorkout"
+            android:icon="@drawable/ic_workout"
+            android:title="Log a workout" />
+
+        <item
+            android:id="@+id/nav_btnCreateTemplate"
+            android:icon="@drawable/ic_note"
+            android:title="Create a template" />
+
+        <item
+            android:id="@+id/nav_btnStatistics"
+            android:icon="@drawable/ic_stats"
+            android:title="See statistics" />
+
+        <item
+            android:id="@+id/nav_btnBrowseExercises"
+            android:icon="@drawable/ic_exercise"
+            android:title="Browse exercises" />
+
+    </group>
+
+    <item android:title="Profile">
+        <menu>
+
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/nav_btnProfile"
+                    android:icon="@drawable/ic_person"
+                    android:title="Profile" />
+
+
+                <item
+                    android:id="@+id/nav_btnLogout"
+                    android:icon="@drawable/ic_exit"
+                    android:title="Logout" />
+
+            </group>
+
+        </menu>
+    </item>
+
+    <item android:title="Share">
+        <menu>
+
+            <group android:checkableBehavior="none">
+
+                <item
+                    android:id="@+id/nav_btnShare"
+                    android:icon="@drawable/ic_share"
+                    android:title="Share" />
+
+
+                <item
+                    android:id="@+id/nav_btnRateUs"
+                    android:icon="@drawable/ic_star"
+                    android:title="Rate us" />
+
+            </group>
+
+        </menu>
+    </item>
+
+</menu>

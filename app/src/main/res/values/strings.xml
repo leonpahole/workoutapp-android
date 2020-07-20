@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">Workout Application</string>
+    <string name="app_name">Workoutsy</string>
+    <string name="app_desc">Simple and fast workout tracker</string>
+    <string name="skip">Skip</string>
+    <string name="choose_login_method">Choose login method</string>
+    <string name="choose_login_method_explained">Store your data on your phone or in our online database.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="planets_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
 </resources>
