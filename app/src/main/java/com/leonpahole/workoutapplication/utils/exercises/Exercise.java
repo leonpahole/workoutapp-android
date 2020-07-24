@@ -1,5 +1,7 @@
 package com.leonpahole.workoutapplication.utils.exercises;
 
+import androidx.annotation.NonNull;
+
 public class Exercise {
     long id;
     String name;
@@ -21,5 +23,11 @@ public class Exercise {
 
     public ExerciseCategory getCategory() {
         return category;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

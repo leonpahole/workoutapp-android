@@ -89,13 +89,7 @@ public class NewExerciseDialog extends DialogFragment {
 
         exerciseDialog_iptExercise = view.findViewById(R.id.exerciseDialog_iptExercise);
 
-        final String[] exerciseNames = new String[exercises.size()];
-        int i = 0;
-        for (Exercise exercise : exercises) {
-            exerciseNames[i++] = exercise.getName();
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.exercise_dropdown_item, exerciseNames);
+        ArrayAdapter<Exercise> adapter = new ArrayAdapter<>(getContext(), R.layout.exercise_dropdown_item, exercises);
         exerciseDialog_iptExercise.setAdapter(adapter);
 
         exerciseDialog_iptExercise.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -103,12 +97,26 @@ public class NewExerciseDialog extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View arg1, int pos,
                                     long id) {
+
+                Exercise customObject = (Exercise) parent.getItemAtPosition(pos);
+                int index = -1;
+                for (int i = 0; i < exercises.size(); i++) {
+                    if (exercises.get(i).getId() == customObject.getId()) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (index < 0) {
+                    return;
+                }
+
                 InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 in.hideSoftInputFromWindow(arg1.getApplicationWindowToken(), 0);
 
                 ExerciseCategory previousCategory = exerciseSelected != null ? exerciseSelected.getCategory() : null;
 
-                exerciseSelected = exercises.get(pos);
+                exerciseSelected = exercises.get(index);
 
                 if (exerciseSelected.getCategory() == ExerciseCategory.STRETCHING ||
                         exerciseSelected.getCategory() == ExerciseCategory.CARDIO) {
