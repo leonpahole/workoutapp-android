@@ -3,6 +3,9 @@ package com.leonpahole.workoutapplication.utils.exercises;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class SetPerformed {
     Integer repetitions;
     TimeDescriptor time;
@@ -70,5 +73,27 @@ public class SetPerformed {
 
     public WeightUnit getWeightUnit() {
         return weightUnit;
+    }
+
+    public JSONObject toJson() throws JSONException {
+        JSONObject set = new JSONObject();
+
+        if (repetitions != null) {
+            set.put("repetitions", repetitions);
+        }
+
+        if (weight != null) {
+            set.put("weight", weight);
+        }
+
+        if (time != null) {
+            set.put("time", time.toSeconds());
+        }
+
+        if (weightUnit != null) {
+            set.put("weightUnit", weightUnit.getCode());
+        }
+
+        return set;
     }
 }

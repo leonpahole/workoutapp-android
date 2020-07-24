@@ -182,7 +182,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
                     .put("comment", comment)
                     .put("startedAt", startedAt)
                     .put("endedAt", endedAt)
-                    .put("exercisesPerformed", new JSONArray());
+                    .put("exercisesPerformed", ExercisePerformed.toJson(exercisesPerformed));
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                     (Request.Method.POST, url, loginRequest, new Response.Listener<JSONObject>() {
@@ -190,6 +190,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
                         @Override
                         public void onResponse(JSONObject response) {
                             Toast.makeText(getContext(), "Workout added!", Toast.LENGTH_LONG).show();
+                            clearInputs();
                         }
                     }, new Response.ErrorListener() {
 
@@ -340,5 +341,17 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
             exercisesPerformed.add(exercisePerformed);
             exercisesAdapter.notifyItemInserted(exercisesPerformed.size() - 1);
         }
+    }
+
+    public void clearInputs() {
+        logWorkout_iptName.getEditText().setText("");
+        logWorkout_iptStartDate.getEditText().setText("");
+        logWorkout_iptStartTime.getEditText().setText("");
+        logWorkout_iptEndTime.getEditText().setText("");
+        logWorkout_iptComment.getEditText().setText("");
+
+        int size = exercisesPerformed.size();
+        exercisesPerformed = new ArrayList<>();
+        exercisesAdapter.notifyItemRangeRemoved(0, size);
     }
 }

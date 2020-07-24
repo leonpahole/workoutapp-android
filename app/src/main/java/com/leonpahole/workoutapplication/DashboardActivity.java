@@ -120,6 +120,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 fragmentClass = ProfileFragment.class;
                 break;
 
+            case R.id.nav_btnWorkoutHistory:
+                fragmentClass = WorkoutHistoryFragment.class;
+                break;
+
             case R.id.nav_btnLogWorkout:
                 fragmentClass = LogWorkoutFragment.class;
                 break;
