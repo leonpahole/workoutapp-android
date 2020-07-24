@@ -1,7 +1,19 @@
 package com.leonpahole.workoutapplication.utils.exercises;
 
+import com.google.gson.annotations.SerializedName;
+
 public enum ExerciseCategory {
-    STRENGTH("STR"), BODYWEIGHT("BW"), STRETCHING("ST"), CARDIO("CA");
+    @SerializedName("STR")
+    STRENGTH("STR"),
+
+    @SerializedName("BW")
+    BODYWEIGHT("BW"),
+
+    @SerializedName("ST")
+    STRETCHING("ST"),
+
+    @SerializedName("CA")
+    CARDIO("CA");
 
     private String code;
 

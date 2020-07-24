@@ -11,7 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.leonpahole.workoutapplication.ExerciseRecyclerViewOnClickListener;
 import com.leonpahole.workoutapplication.R;
+import com.leonpahole.workoutapplication.utils.exercises.ExerciseCategory;
 import com.leonpahole.workoutapplication.utils.exercises.ExercisePerformed;
 import com.leonpahole.workoutapplication.utils.exercises.SetPerformed;
 
@@ -20,9 +22,11 @@ import java.util.List;
 public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.ExercisesViewHolder> {
 
     List<ExercisePerformed> exercisesPerformed;
+    ExerciseRecyclerViewOnClickListener listener;
 
-    public ExercisesAdapter(List<ExercisePerformed> exercisesPerformed) {
+    public ExercisesAdapter(List<ExercisePerformed> exercisesPerformed, ExerciseRecyclerViewOnClickListener listener) {
         this.exercisesPerformed = exercisesPerformed;
+        this.listener = listener;
     }
 
     public class ExercisesViewHolder extends RecyclerView.ViewHolder {
@@ -30,19 +34,27 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
         TextView exercisesListItem_txtTitle;
         LinearLayout exercisesListItem_layoutSets;
 
-        ImageView exercisesListItem_imgDelete;
+        ImageView exercisesListItem_imgDelete, exercisesListItem_imgEdit;
 
-        public ExercisesViewHolder(@NonNull View itemView) {
+        public ExercisesViewHolder(@NonNull View itemView, final ExerciseRecyclerViewOnClickListener listener) {
             super(itemView);
 
             exercisesListItem_txtTitle = itemView.findViewById(R.id.exercisesListItem_txtTitle);
             exercisesListItem_layoutSets = itemView.findViewById(R.id.exercisesListItem_layoutSets);
             exercisesListItem_imgDelete = itemView.findViewById(R.id.exercisesListItem_imgDelete);
+            exercisesListItem_imgEdit = itemView.findViewById(R.id.exercisesListItem_imgEdit);
 
             exercisesListItem_imgDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     removeAt(getAdapterPosition());
+                }
+            });
+
+            exercisesListItem_imgEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onClick(v, getAdapterPosition());
                 }
             });
         }
@@ -58,7 +70,7 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
     @Override
     public ExercisesAdapter.ExercisesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.exercises_list_item, parent, false);
-        ExercisesAdapter.ExercisesViewHolder exercisesViewHolder = new ExercisesAdapter.ExercisesViewHolder(view);
+        ExercisesAdapter.ExercisesViewHolder exercisesViewHolder = new ExercisesAdapter.ExercisesViewHolder(view, listener);
         return exercisesViewHolder;
     }
 
@@ -76,7 +88,13 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
         for (SetPerformed set : exercisePerformed.getSets()) {
             View child = inflater.inflate(R.layout.set_line, null);
             ((TextView) child.findViewById(R.id.setLine_txtSetInformation)).setText(set.toString());
-            ((TextView) child.findViewById(R.id.setLine_txtSetNumber)).setText("Set " + setNumber + ":");
+
+            String setNumberString = "Set " + setNumber + ":";
+            if (exercisePerformed.getExercise().getCategory() == ExerciseCategory.CARDIO) {
+                setNumberString = "";
+            }
+
+            ((TextView) child.findViewById(R.id.setLine_txtSetNumber)).setText(setNumberString);
 
             holder.exercisesListItem_layoutSets.addView(child);
             setNumber++;

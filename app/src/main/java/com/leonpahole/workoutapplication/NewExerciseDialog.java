@@ -26,11 +26,14 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.leonpahole.workoutapplication.utils.GsonUtil;
+import com.leonpahole.workoutapplication.utils.LocalStorage;
 import com.leonpahole.workoutapplication.utils.NumericHelper;
 import com.leonpahole.workoutapplication.utils.exercises.Exercise;
 import com.leonpahole.workoutapplication.utils.exercises.ExerciseCategory;
 import com.leonpahole.workoutapplication.utils.exercises.ExercisePerformed;
 import com.leonpahole.workoutapplication.utils.exercises.SetPerformed;
+import com.leonpahole.workoutapplication.utils.exercises.TimeDescriptor;
 import com.leonpahole.workoutapplication.utils.exercises.WeightUnit;
 
 import org.w3c.dom.Text;
@@ -53,6 +56,8 @@ public class NewExerciseDialog extends DialogFragment {
     Button exerciseDialog_btnAddSet;
     ScrollView exerciseDialog_setsLayoutScroll;
 
+    int editPosition = -1;
+
     int setCount = 0;
 
     public void setListener(NewExerciseDialogListener listener) {
@@ -66,14 +71,7 @@ public class NewExerciseDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.new_exercise_dialog, null);
 
-        exercises = new ArrayList<>();
-        exercises.add(new Exercise(1, "Pull ups", ExerciseCategory.BODYWEIGHT));
-        exercises.add(new Exercise(2, "Bench press", ExerciseCategory.STRENGTH));
-        exercises.add(new Exercise(3, "Hamstrings", ExerciseCategory.STRETCHING));
-        exercises.add(new Exercise(4, "Stationary bike", ExerciseCategory.CARDIO));
-        exercises.add(new Exercise(5, "Push ups", ExerciseCategory.BODYWEIGHT));
-        exercises.add(new Exercise(6, "Walking", ExerciseCategory.CARDIO));
-        exercises.add(new Exercise(7, "Deadlift", ExerciseCategory.STRENGTH));
+        exercises = LocalStorage.getExercises(getContext());
 
         builder.setView(view)
                 .setTitle("Add an exercise")
@@ -91,7 +89,7 @@ public class NewExerciseDialog extends DialogFragment {
 
         exerciseDialog_iptExercise = view.findViewById(R.id.exerciseDialog_iptExercise);
 
-        String[] exerciseNames = new String[exercises.size()];
+        final String[] exerciseNames = new String[exercises.size()];
         int i = 0;
         for (Exercise exercise : exercises) {
             exerciseNames[i++] = exercise.getName();
@@ -112,16 +110,11 @@ public class NewExerciseDialog extends DialogFragment {
 
                 exerciseSelected = exercises.get(pos);
 
-                if (exerciseSelected.getCategory() != ExerciseCategory.CARDIO) {
-                    exerciseDialog_btnAddSet.setVisibility(View.VISIBLE);
-                } else {
+                if (exerciseSelected.getCategory() == ExerciseCategory.STRETCHING ||
+                        exerciseSelected.getCategory() == ExerciseCategory.CARDIO) {
                     exerciseDialog_btnAddSet.setVisibility(View.GONE);
-                }
-
-                // clear layout if different category is selected
-                if (exerciseSelected.getCategory() != previousCategory) {
-                    exerciseDialog_setsLayout.removeAllViews();
-                    setCount = 0;
+                } else {
+                    exerciseDialog_btnAddSet.setVisibility(View.VISIBLE);
                 }
 
                 switch (exerciseSelected.getCategory()) {
@@ -136,6 +129,16 @@ public class NewExerciseDialog extends DialogFragment {
                     case CARDIO:
                         setupCardio();
                         break;
+                }
+
+                // clear layout if different category is selected
+                if (exerciseSelected.getCategory() != previousCategory) {
+                    exerciseDialog_setsLayout.removeAllViews();
+                    setCount = 0;
+
+                    if (exerciseSelected.getCategory() != ExerciseCategory.STRETCHING) {
+                        addSetLineInput(null);
+                    }
                 }
 
                 exerciseDialog_iptExerciseLayout.setError(null);
@@ -153,7 +156,7 @@ public class NewExerciseDialog extends DialogFragment {
         exerciseDialog_btnAddSet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addSetLineInput();
+                addSetLineInput(null);
 
                 exerciseDialog_setsLayoutScroll.postDelayed(new Runnable() {
                     @Override
@@ -223,7 +226,7 @@ public class NewExerciseDialog extends DialogFragment {
                                     EditText setLineInput_iptTimeSeconds = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptTimeSeconds)).getEditText();
                                     int seconds = Integer.parseInt(setLineInput_iptTimeSeconds.getText().toString());
 
-                                    setPerformed = SetPerformed.cardio(hours * 3600 + minutes * 60 + seconds);
+                                    setPerformed = SetPerformed.cardio(new TimeDescriptor(seconds, minutes, hours));
                                     break;
 
                                 case STRETCHING:
@@ -237,13 +240,53 @@ public class NewExerciseDialog extends DialogFragment {
                         ExercisePerformed exercisePerformed = new ExercisePerformed(exerciseSelected,
                                 setsPerformed, noSets);
 
-                        listener.applyExercise(exercisePerformed);
+                        listener.applyExercise(exercisePerformed, editPosition);
                         dialog.dismiss();
                     }
                 });
             }
         });
 
+        Bundle arguments = getArguments();
+
+        if (arguments != null) {
+
+            String exerciseToEdit_String = arguments.getString("exercisePerformed", null);
+            editPosition = arguments.getInt("editPosition", -1);
+
+            if (exerciseToEdit_String != null && editPosition >= 0) {
+
+                ExercisePerformed exercisePerformed = GsonUtil.getGsonParser().fromJson(exerciseToEdit_String, ExercisePerformed.class);
+                this.exerciseSelected = exercisePerformed.getExercise();
+
+                exerciseDialog_iptExercise.setText(exerciseSelected.getName());
+
+                switch (exerciseSelected.getCategory()) {
+                    case BODYWEIGHT:
+                        setupBodyweight();
+                        exerciseDialog_btnAddSet.setVisibility(View.VISIBLE);
+                        break;
+
+                    case STRENGTH:
+                        setupStrength();
+                        exerciseDialog_btnAddSet.setVisibility(View.VISIBLE);
+                        break;
+
+                    case CARDIO:
+                        setupCardio();
+                        exerciseDialog_btnAddSet.setVisibility(View.VISIBLE);
+                        break;
+
+                    case STRETCHING:
+                        break;
+                }
+
+                List<SetPerformed> setsPerformed = exercisePerformed.getSets();
+                for (SetPerformed set : setsPerformed) {
+                    addSetLineInput(set);
+                }
+            }
+        }
 
         return dialog;
     }
@@ -385,20 +428,17 @@ public class NewExerciseDialog extends DialogFragment {
 
     private void setupBodyweight() {
         setLineInputViewId = R.layout.set_line_input_bodyweight;
-        addSetLineInput();
     }
 
     private void setupStrength() {
         setLineInputViewId = R.layout.set_line_input_strength;
-        addSetLineInput();
     }
 
     private void setupCardio() {
         setLineInputViewId = R.layout.set_line_input_cardio;
-        addSetLineInput();
     }
 
-    private void addSetLineInput() {
+    private void addSetLineInput(SetPerformed set) {
 
         if (setLineInputViewId == null) {
             return;
@@ -436,9 +476,44 @@ public class NewExerciseDialog extends DialogFragment {
 
             setCount++;
         }
+
+        if (set != null) {
+
+            switch (exerciseSelected.getCategory()) {
+                case BODYWEIGHT:
+                    // reps
+                    EditText setLineInput_iptReps = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptReps)).getEditText();
+                    setLineInput_iptReps.setText(set.getRepetitions().toString());
+                    break;
+
+                case STRENGTH:
+                    // reps
+                    EditText setLineInput_iptReps2 = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptReps)).getEditText();
+                    setLineInput_iptReps2.setText(set.getRepetitions().toString());
+
+                    EditText setLineInput_iptWeight = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptWeight)).getEditText();
+                    setLineInput_iptWeight.setText(set.getWeight().toString());
+                    break;
+
+                case CARDIO:
+                    EditText setLineInput_iptTimeHours = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptTimeHours)).getEditText();
+                    setLineInput_iptTimeHours.setText(set.getTime().getHours() + "");
+
+                    EditText setLineInput_iptTimeMinutes = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptTimeMinutes)).getEditText();
+                    setLineInput_iptTimeMinutes.setText(set.getTime().getMinutes() + "");
+
+                    EditText setLineInput_iptTimeSeconds = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptTimeSeconds)).getEditText();
+                    setLineInput_iptTimeSeconds.setText(set.getTime().getSeconds() + "");
+
+                    break;
+
+                case STRETCHING:
+                    break;
+            }
+        }
     }
 
     public interface NewExerciseDialogListener {
-        void applyExercise(ExercisePerformed exercisePerformed);
+        void applyExercise(ExercisePerformed exercisePerformed, int editPosition);
     }
 }

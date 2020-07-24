@@ -15,8 +15,23 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.navigation.NavigationView;
 import com.leonpahole.workoutapplication.utils.LocalStorage;
+import com.leonpahole.workoutapplication.utils.exercises.Exercise;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -24,6 +39,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     NavigationView dashboard_navigationView;
     LinearLayout dashboard_contentLayout;
     ImageView dashboard_imgMenu;
+    RequestQueue queue;
+    String url = "http://192.168.1.68:8080/api/exercise";
 
     private static final float END_SCALE = 1.0f;
 
@@ -39,6 +56,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         dashboard_drawerLayout = findViewById(R.id.dashboard_drawerLayout);
         dashboard_navigationView = findViewById(R.id.dashboard_navigationView);
 
+        setup();
         navigationDrawer();
         inflateLayoutFragment(DashboardHomeFragment.class);
     }
@@ -145,5 +163,49 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    private void setup() {
+        if (!LocalStorage.hasExercises(getApplicationContext())) {
+            queue = Volley.newRequestQueue(getApplicationContext());
+
+            JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
+                    (Request.Method.GET, url, new JSONArray(), new Response.Listener<JSONArray>() {
+
+                        @Override
+                        public void onResponse(JSONArray response) {
+
+                            LocalStorage.saveExercises(getApplicationContext(), response);
+
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // TODO: Handle error
+                            if (error == null) {
+                                Toast.makeText(getApplicationContext(), "An unknown error has occured", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            error.printStackTrace();
+
+                            if (error.networkResponse == null) {
+                                Toast.makeText(getApplicationContext(), "A network error has occured", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Unknown application error has occured", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }) {    //this is the part, that adds the header to the request
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("Authorization", "Bearer " + LocalStorage.getJwt(getApplicationContext()));
+                    return params;
+                }
+            };
+
+            queue.add(jsonObjectRequest);
+        }
     }
 }

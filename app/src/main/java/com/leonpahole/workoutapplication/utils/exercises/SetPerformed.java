@@ -4,13 +4,14 @@ package com.leonpahole.workoutapplication.utils.exercises;
 import androidx.annotation.NonNull;
 
 public class SetPerformed {
-    Integer repetitions, time;
+    Integer repetitions;
+    TimeDescriptor time;
     Double weight;
     WeightUnit weightUnit;
 
     // strength: 3 x 5 KG
     // bodyweight: 3 x 0 KG / LBS
-    public SetPerformed(Integer repetitions, Double weight, WeightUnit weightUnit, Integer time) {
+    public SetPerformed(Integer repetitions, Double weight, WeightUnit weightUnit, TimeDescriptor time) {
         this.repetitions = repetitions;
         this.weight = weight;
         this.weightUnit = weightUnit;
@@ -29,7 +30,7 @@ public class SetPerformed {
         return new SetPerformed(null, null, null, null);
     }
 
-    public static SetPerformed cardio(Integer time) {
+    public static SetPerformed cardio(TimeDescriptor time) {
         return new SetPerformed(null, null, null, time);
     }
 
@@ -43,7 +44,7 @@ public class SetPerformed {
         }
 
         if (time != null) {
-            stringBuilder.append(time + "s x ");
+            stringBuilder.append(time.getHours() + "h " + time.getMinutes() + "m " + time.getSeconds() + "s");
         }
 
         if (weight != null && weight > 0) {
@@ -53,5 +54,21 @@ public class SetPerformed {
         }
 
         return stringBuilder.toString();
+    }
+
+    public Integer getRepetitions() {
+        return repetitions;
+    }
+
+    public TimeDescriptor getTime() {
+        return time;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public WeightUnit getWeightUnit() {
+        return weightUnit;
     }
 }

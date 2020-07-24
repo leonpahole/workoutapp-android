@@ -1,9 +1,9 @@
 # First iteration
 
-- Splash screen
-- Welcome screen
-- Login with REST API
-- Fetch exercices with REST API
+- Splash screen YES
+- Welcome screen YES
+- Login with REST API YES
+- Fetch exercices with REST API YES
 - Save static workout
 - List workouts
 - See one workout

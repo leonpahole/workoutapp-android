@@ -36,7 +36,7 @@ public class SignUpActivity extends AppCompatActivity {
     Button signup_btnSignup, signup_btnAlreadyHaveAccount, signup_btnSwitchMethod;
 
     RequestQueue queue;
-    String url = "http://192.168.1.67:8080/api/user/register";
+    String url = "http://192.168.1.68:8080/api/user/register";
 
     private static final boolean DEBUG = true;
 

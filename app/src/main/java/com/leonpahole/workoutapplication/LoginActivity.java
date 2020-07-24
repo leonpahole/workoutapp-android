@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     TextInputLayout login_iptEmail, login_iptPassword;
 
     RequestQueue queue;
-    String url = "http://192.168.1.67:8080/api/user/login";
+    String url = "http://192.168.1.68:8080/api/user/login";
 
     private static final boolean DEBUG = true;
 
