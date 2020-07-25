@@ -524,4 +524,32 @@ public class NewExerciseDialog extends DialogFragment {
     public interface NewExerciseDialogListener {
         void applyExercise(ExercisePerformed exercisePerformed, int editPosition);
     }
+
+    private Integer lastEditTextIdInSetLine(ExerciseCategory category) {
+        switch (category) {
+            case CARDIO:
+                return R.id.setLineInput_iptTimeSeconds;
+
+            case STRENGTH:
+            case BODYWEIGHT:
+                return R.id.setLineInput_iptWeight;
+        }
+
+        return null;
+    }
+
+    private Integer firstEditTextIdInSetLine(ExerciseCategory category) {
+        switch (category) {
+            case CARDIO:
+                return R.id.setLineInput_iptTimeHours;
+
+            case STRENGTH:
+                return R.id.setLineInput_iptWeight;
+
+            case BODYWEIGHT:
+                return R.id.setLineInput_iptReps;
+        }
+
+        return null;
+    }
 }

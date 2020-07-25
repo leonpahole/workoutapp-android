@@ -3,6 +3,7 @@ package com.leonpahole.workoutapplication;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
@@ -154,34 +156,18 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
     private void sendSaveWorkout() {
 
         String name = logWorkout_iptName.getEditText().getText().toString().trim();
-        String date = logWorkout_iptStartDate.getEditText().getText().toString().trim();
-        String comment = logWorkout_iptName.getEditText().getText().toString().trim();
+        String comment = logWorkout_iptComment.getEditText().getText().toString().trim();
+        String startDate = logWorkout_iptStartDate.getEditText().getText().toString().trim();
         String startTime = logWorkout_iptStartTime.getEditText().getText().toString().trim();
         String endTime = logWorkout_iptEndTime.getEditText().getText().toString().trim();
-
-        DateFormat format = new SimpleDateFormat("dd. MM. yyyy hh:mm:ss");
-        DateFormat formatOut = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
-
-        String startedAt = "";
-        String endedAt = "";
-
-        try {
-            Date startedAtD = format.parse(date + " " + (!startTime.isEmpty() ? startTime + ":00" : "00:00:00"));
-            Date endedAtD = format.parse(date + " " + (!endTime.isEmpty() ? endTime + ":00" : "00:00:00"));
-
-            startedAt = formatOut.format(startedAtD);
-            endedAt = formatOut.format(endedAtD);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
 
         try {
             final JSONObject loginRequest = new JSONObject()
                     .put("name", name)
                     .put("comment", comment)
-                    .put("startedAt", startedAt)
-                    .put("endedAt", endedAt)
+                    .put("startDate", startDate)
+                    .put("startTime", startTime)
+                    .put("endTime", endTime)
                     .put("exercisesPerformed", ExercisePerformed.toJson(exercisesPerformed));
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
@@ -279,7 +265,8 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
                             @Override
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
-                                logWorkout_iptStartDate.getEditText().setText(dayOfMonth + ". " + (monthOfYear + 1) + ". " + year);
+                                logWorkout_iptStartDate.getEditText().setText(
+                                        String.format("%02d", dayOfMonth) + ". " + String.format("%02d", monthOfYear + 1) + ". " + year);
                             }
 
                         }, mYear, mMonth, mDay);
@@ -301,7 +288,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay,
                                                   int minute) {
-                                logWorkout_iptStartTime.getEditText().setText(hourOfDay + ":" + minute);
+                                logWorkout_iptStartTime.getEditText().setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
                             }
                         }, mHour, mMinute, false);
                 timePickerDialog.show();
@@ -322,7 +309,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay,
                                                   int minute) {
-                                logWorkout_iptEndTime.getEditText().setText(hourOfDay + ":" + minute);
+                                logWorkout_iptEndTime.getEditText().setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
                             }
                         }, mHour, mMinute, false);
                 timePickerDialog.show();
@@ -341,6 +328,12 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
             exercisesPerformed.add(exercisePerformed);
             exercisesAdapter.notifyItemInserted(exercisesPerformed.size() - 1);
         }
+
+
+        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+        }
     }
 
     public void clearInputs() {
@@ -351,7 +344,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         logWorkout_iptComment.getEditText().setText("");
 
         int size = exercisesPerformed.size();
-        exercisesPerformed = new ArrayList<>();
+        exercisesPerformed.clear();
         exercisesAdapter.notifyItemRangeRemoved(0, size);
     }
 }
