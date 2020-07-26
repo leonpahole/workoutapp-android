@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -37,8 +38,10 @@ import com.leonpahole.workoutapplication.utils.exercises.ExercisePerformed;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,6 +114,10 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         logWorkout_btnAddExercise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                clearFocus();
+                clearKeyboard();
+
                 NewExerciseDialog newExerciseDialog = new NewExerciseDialog();
                 newExerciseDialog.show(getFragmentManager(), "New exercise dialog");
                 newExerciseDialog.setListener(LogWorkoutFragment.this);
@@ -166,8 +173,24 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            Toast.makeText(getContext(), "Workout added!", Toast.LENGTH_LONG).show();
-                            clearInputs();
+
+                            if (response.has("id") && !response.isNull("id")) {
+
+                                Toast.makeText(getContext(), "Workout added!", Toast.LENGTH_LONG).show();
+                                clearInputs();
+
+                                Intent intent = new Intent(getContext(), WorkoutDetailsActivity.class);
+
+                                try {
+                                    intent.putExtra("workoutId", response.getLong("id"));
+                                    startActivity(intent);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Toast.makeText(getContext(), "A data error has occured", Toast.LENGTH_LONG).show();
+                            }
+
                         }
                     }, new Response.ErrorListener() {
 
@@ -242,9 +265,16 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
     }
 
     private void dateTimePickers() {
+
+        logWorkout_iptStartDate.getEditText().setText(new SimpleDateFormat("dd. MM. yyyy").format(new Date()));
+        logWorkout_iptEndTime.getEditText().setText(new SimpleDateFormat("HH:mm").format(new Date()));
+
         logWorkout_iptStartDate.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearFocus();
+                clearKeyboard();
+
                 final Calendar c = Calendar.getInstance();
                 int mYear = c.get(Calendar.YEAR);
                 int mMonth = c.get(Calendar.MONTH);
@@ -268,6 +298,9 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         logWorkout_iptStartTime.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearFocus();
+                clearKeyboard();
+
                 final Calendar c = Calendar.getInstance();
                 int mHour = c.get(Calendar.HOUR_OF_DAY);
                 int mMinute = c.get(Calendar.MINUTE);
@@ -289,6 +322,9 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         logWorkout_iptEndTime.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearFocus();
+                clearKeyboard();
+
                 final Calendar c = Calendar.getInstance();
                 int mHour = c.get(Calendar.HOUR_OF_DAY);
                 int mMinute = c.get(Calendar.MINUTE);
@@ -308,6 +344,12 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         });
     }
 
+    private void clearFocus() {
+        if (getActivity().getCurrentFocus() != null) {
+            getActivity().getCurrentFocus().clearFocus();
+        }
+    }
+
     @Override
     public void applyExercise(ExercisePerformed exercisePerformed, int editPosition) {
         if (editPosition >= 0) {
@@ -320,11 +362,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
             exercisesAdapter.notifyItemInserted(exercisesPerformed.size() - 1);
         }
 
-
-        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-        }
+        clearKeyboard();
     }
 
     public void clearInputs() {
@@ -337,5 +375,12 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         int size = exercisesPerformed.size();
         exercisesPerformed.clear();
         exercisesAdapter.notifyItemRangeRemoved(0, size);
+    }
+
+    private void clearKeyboard() {
+        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+        }
     }
 }

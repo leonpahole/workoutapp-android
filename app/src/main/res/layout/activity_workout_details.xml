@@ -25,17 +25,99 @@
         android:id="@+id/workoutDetails_rootContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/workoutDetails_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/muli_extralight"
+                android:text="Workout name"
+                android:textColor="@color/colorPrimary"
+                android:textSize="30dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/workoutDetails_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20. 07. 2000" />
+
+                <TextView
+                    android:id="@+id/workoutDetails_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="15:30 - 16:00"
+                    android:textSize="10dp" />
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/workoutDetails_commentsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/muli_bold"
+                android:text="Comments"
+                android:textColor="@color/black"
+                android:textSize="18dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/workoutDetails_comments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/muli_extralight"
+                android:text="Comment 1, comment 2. Comment 3, test."
+                android:textColor="@color/black"
+                android:textSize="18dp" />
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/workoutDetails_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/muli_extralight"
+            android:text="Exercises"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/workoutDetails_recViewExercises"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/workoutDetails_txtNoExercises"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/muli_extralight"
-            android:padding="15dp"
-            android:text="Workout name"
-            android:textColor="@color/colorPrimary"
-            android:textSize="30dp" />
+            android:text="No exercises logged." />
 
     </LinearLayout>
 

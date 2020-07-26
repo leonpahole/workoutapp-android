@@ -17,7 +17,7 @@ import android.widget.Spinner;
 
 public class DashboardHomeFragment extends Fragment {
 
-    Button dashboardHome_btnStartWorkout, dashboardHome_btnLogWorkout;
+    Button dashboardHome_btnStartWorkout, dashboardHome_btnLogWorkout, dashboardHome_btnWorkoutHistory;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,7 @@ public class DashboardHomeFragment extends Fragment {
 
         dashboardHome_btnLogWorkout = view.findViewById(R.id.dashboardHome_btnLogWorkout);
         dashboardHome_btnStartWorkout = view.findViewById(R.id.dashboardHome_btnStartWorkout);
+        dashboardHome_btnWorkoutHistory = view.findViewById(R.id.dashboardHome_btnWorkoutHistory);
 
         dashboardHome_btnLogWorkout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,6 +57,17 @@ public class DashboardHomeFragment extends Fragment {
                 if (activity instanceof DashboardActivity) {
                     ((DashboardActivity) getActivity()).inflateLayoutFragment(LiveWorkoutFragment.class);
                     ((DashboardActivity) getActivity()).selectMenuItem(R.id.nav_btnNewWorkout);
+                }
+            }
+        });
+
+        dashboardHome_btnWorkoutHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity activity = getActivity();
+                if (activity instanceof DashboardActivity) {
+                    ((DashboardActivity) getActivity()).inflateLayoutFragment(WorkoutHistoryFragment.class);
+                    ((DashboardActivity) getActivity()).selectMenuItem(R.id.nav_btnWorkoutHistory);
                 }
             }
         });

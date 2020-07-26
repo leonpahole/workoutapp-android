@@ -47,6 +47,15 @@
             android:text="Log a workout"
             android:textColor="@color/white" />
 
+        <Button
+            android:id="@+id/dashboardHome_btnWorkoutHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorPrimary"
+            android:text="Workout history"
+            android:textColor="@color/white" />
+
     </LinearLayout>
 
 </LinearLayout>

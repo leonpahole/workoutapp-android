@@ -22,10 +22,16 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
 
     List<ExercisePerformed> exercisesPerformed;
     RecyclerViewOnClickListener listener;
+    boolean editMode = false;
 
-    public ExercisesAdapter(List<ExercisePerformed> exercisesPerformed, RecyclerViewOnClickListener listener) {
+    public ExercisesAdapter(List<ExercisePerformed> exercisesPerformed, RecyclerViewOnClickListener listener, boolean editMode) {
         this.exercisesPerformed = exercisesPerformed;
         this.listener = listener;
+        this.editMode = editMode;
+    }
+
+    public ExercisesAdapter(List<ExercisePerformed> exercisesPerformed, RecyclerViewOnClickListener listener) {
+        this(exercisesPerformed, listener, true);
     }
 
     public class ExercisesViewHolder extends RecyclerView.ViewHolder {
@@ -35,7 +41,7 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
 
         ImageView exercisesListItem_imgDelete, exercisesListItem_imgEdit;
 
-        public ExercisesViewHolder(@NonNull View itemView, final RecyclerViewOnClickListener listener) {
+        public ExercisesViewHolder(@NonNull View itemView, final RecyclerViewOnClickListener listener, boolean editMode) {
             super(itemView);
 
             exercisesListItem_txtTitle = itemView.findViewById(R.id.exercisesListItem_txtTitle);
@@ -43,19 +49,24 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
             exercisesListItem_imgDelete = itemView.findViewById(R.id.exercisesListItem_imgDelete);
             exercisesListItem_imgEdit = itemView.findViewById(R.id.exercisesListItem_imgEdit);
 
-            exercisesListItem_imgDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    removeAt(getAdapterPosition());
-                }
-            });
+            if (editMode) {
+                exercisesListItem_imgDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        removeAt(getAdapterPosition());
+                    }
+                });
 
-            exercisesListItem_imgEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onClick(v, getAdapterPosition());
-                }
-            });
+                exercisesListItem_imgEdit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onClick(v, getAdapterPosition());
+                    }
+                });
+            } else {
+                exercisesListItem_imgDelete.setVisibility(View.GONE);
+                exercisesListItem_imgEdit.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -69,7 +80,7 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
     @Override
     public ExercisesAdapter.ExercisesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.exercises_list_item, parent, false);
-        ExercisesAdapter.ExercisesViewHolder exercisesViewHolder = new ExercisesAdapter.ExercisesViewHolder(view, listener);
+        ExercisesAdapter.ExercisesViewHolder exercisesViewHolder = new ExercisesAdapter.ExercisesViewHolder(view, listener, editMode);
         return exercisesViewHolder;
     }
 
