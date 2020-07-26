@@ -6,8 +6,8 @@
 - Fetch exercices with REST API YES
 - Save static workout YES
 - List workouts YES
-- See one workout
-- Logout
+- See one workout YES
+- Logout YES
 
 # Second iteration
 
