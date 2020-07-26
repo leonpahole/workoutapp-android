@@ -1,22 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/workoutListItem_rootContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/workoutListItem_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Workout name" />
+        android:fontFamily="@font/muli_extralight"
+        android:text="Workout name"
+        android:textColor="@color/colorPrimary"
+        android:textSize="25dp" />
 
     <TextView
+        android:id="@+id/workoutListItem_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start date" />
+        android:fontFamily="@font/muli_extralight"
+        android:text="5. 12. 2020"
+        android:textSize="20dp" />
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/workoutListItem_timeContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="End date" />
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/workoutListItem_startTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/muli_extralight"
+            android:text="16:00"
+            android:textSize="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:text="-"
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/workoutListItem_endTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/muli_extralight"
+            android:text="17:30"
+            android:textSize="15dp" />
+
+    </LinearLayout>
 
 </LinearLayout>

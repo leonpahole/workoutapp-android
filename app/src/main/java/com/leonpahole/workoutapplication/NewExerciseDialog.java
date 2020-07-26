@@ -191,9 +191,6 @@ public class NewExerciseDialog extends DialogFragment {
                             return;
                         }
 
-                        boolean noSets = (exerciseSelected.getCategory() == ExerciseCategory.CARDIO) ||
-                                (exerciseSelected.getCategory() == ExerciseCategory.STRETCHING);
-
                         List<SetPerformed> setsPerformed = new ArrayList<>();
 
                         int setsCount = exerciseDialog_setsLayout.getChildCount();
@@ -246,7 +243,7 @@ public class NewExerciseDialog extends DialogFragment {
                         }
 
                         ExercisePerformed exercisePerformed = new ExercisePerformed(exerciseSelected,
-                                setsPerformed, noSets);
+                                setsPerformed);
 
                         listener.applyExercise(exercisePerformed, editPosition);
                         dialog.dismiss();

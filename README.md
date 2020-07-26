@@ -4,8 +4,8 @@
 - Welcome screen YES
 - Login with REST API YES
 - Fetch exercices with REST API YES
-- Save static workout
-- List workouts
+- Save static workout YES
+- List workouts YES
 - See one workout
 - Logout
 

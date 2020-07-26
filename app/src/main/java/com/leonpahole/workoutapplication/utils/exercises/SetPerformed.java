@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Time;
+
 public class SetPerformed {
     Integer repetitions;
     TimeDescriptor time;
@@ -95,5 +97,31 @@ public class SetPerformed {
         }
 
         return set;
+    }
+
+    public static SetPerformed fromJson(JSONObject setJson) throws JSONException {
+        try {
+            Integer repetitions = null;
+            TimeDescriptor time = null;
+            Double weight = null;
+
+            if (setJson.has("time") && !setJson.isNull("time")) {
+                int timeSeconds = setJson.getInt("time");
+                time = TimeDescriptor.fromSeconds(timeSeconds);
+            }
+
+            if (setJson.has("repetitions") && !setJson.isNull("repetitions")) {
+                repetitions = setJson.getInt("repetitions");
+            }
+
+            if (setJson.has("weight") && !setJson.isNull("weight")) {
+                weight = setJson.getDouble("weight");
+            }
+
+            return new SetPerformed(repetitions, weight, WeightUnit.KILOGRAM, time);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

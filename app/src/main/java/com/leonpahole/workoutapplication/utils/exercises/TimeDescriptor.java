@@ -24,4 +24,8 @@ public class TimeDescriptor {
     public int toSeconds() {
         return 60 * 60 * hours + 60 * minutes + seconds;
     }
+
+    public static TimeDescriptor fromSeconds(int seconds) {
+        return new TimeDescriptor(100, 10, 1);
+    }
 }

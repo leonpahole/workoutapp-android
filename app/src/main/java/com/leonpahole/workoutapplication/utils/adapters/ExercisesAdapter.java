@@ -1,6 +1,5 @@
 package com.leonpahole.workoutapplication.utils.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.leonpahole.workoutapplication.ExerciseRecyclerViewOnClickListener;
+import com.leonpahole.workoutapplication.RecyclerViewOnClickListener;
 import com.leonpahole.workoutapplication.R;
 import com.leonpahole.workoutapplication.utils.exercises.ExerciseCategory;
 import com.leonpahole.workoutapplication.utils.exercises.ExercisePerformed;
@@ -22,9 +21,9 @@ import java.util.List;
 public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.ExercisesViewHolder> {
 
     List<ExercisePerformed> exercisesPerformed;
-    ExerciseRecyclerViewOnClickListener listener;
+    RecyclerViewOnClickListener listener;
 
-    public ExercisesAdapter(List<ExercisePerformed> exercisesPerformed, ExerciseRecyclerViewOnClickListener listener) {
+    public ExercisesAdapter(List<ExercisePerformed> exercisesPerformed, RecyclerViewOnClickListener listener) {
         this.exercisesPerformed = exercisesPerformed;
         this.listener = listener;
     }
@@ -36,7 +35,7 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
 
         ImageView exercisesListItem_imgDelete, exercisesListItem_imgEdit;
 
-        public ExercisesViewHolder(@NonNull View itemView, final ExerciseRecyclerViewOnClickListener listener) {
+        public ExercisesViewHolder(@NonNull View itemView, final RecyclerViewOnClickListener listener) {
             super(itemView);
 
             exercisesListItem_txtTitle = itemView.findViewById(R.id.exercisesListItem_txtTitle);
@@ -77,8 +76,6 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
     @Override
     public void onBindViewHolder(@NonNull ExercisesAdapter.ExercisesViewHolder holder, final int position) {
         ExercisePerformed exercisePerformed = exercisesPerformed.get(position);
-
-        System.out.println(exercisePerformed.getSets().size());
 
         holder.exercisesListItem_txtTitle.setText(exercisePerformed.getExercise().getName());
         holder.exercisesListItem_layoutSets.removeAllViews();

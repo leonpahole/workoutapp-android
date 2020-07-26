@@ -5,7 +5,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,21 +32,13 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.leonpahole.workoutapplication.utils.GsonUtil;
 import com.leonpahole.workoutapplication.utils.LocalStorage;
 import com.leonpahole.workoutapplication.utils.adapters.ExercisesAdapter;
-import com.leonpahole.workoutapplication.utils.exercises.Exercise;
-import com.leonpahole.workoutapplication.utils.exercises.ExerciseCategory;
 import com.leonpahole.workoutapplication.utils.exercises.ExercisePerformed;
-import com.leonpahole.workoutapplication.utils.exercises.SetPerformed;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +97,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         logWorkout_recExercises.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         // logWorkout_recExercises.setNestedScrollingEnabled(false);
 
-        exercisesAdapter = new ExercisesAdapter(exercisesPerformed, new ExerciseRecyclerViewOnClickListener() {
+        exercisesAdapter = new ExercisesAdapter(exercisesPerformed, new RecyclerViewOnClickListener() {
             @Override
             public void onClick(View view, int position) {
                 onExerciseEdit(position);
