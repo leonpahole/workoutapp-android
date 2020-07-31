@@ -27,8 +27,8 @@ public class SetPerformed {
         return new SetPerformed(repetitions, null, null, null);
     }
 
-    public static SetPerformed strength(Integer repetitions, Double weight, WeightUnit weightUnit) {
-        return new SetPerformed(repetitions, weight, weightUnit, null);
+    public static SetPerformed strength(Integer repetitions, Double weight) {
+        return new SetPerformed(repetitions, weight, WeightUnit.KILOGRAM, null);
     }
 
     public static SetPerformed stretching() {
@@ -50,9 +50,7 @@ public class SetPerformed {
 
         if (time != null) {
             stringBuilder.append(time.getHours() + "h " + time.getMinutes() + "m " + time.getSeconds() + "s");
-        }
-
-        if (weight != null && weight > 0) {
+        } else if (weight != null && weight > 0) {
             stringBuilder.append(weight + weightUnit.getCode());
         } else {
             stringBuilder.append("BW");

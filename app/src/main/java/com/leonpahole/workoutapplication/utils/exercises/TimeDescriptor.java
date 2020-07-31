@@ -1,12 +1,14 @@
 package com.leonpahole.workoutapplication.utils.exercises;
 
-public class TimeDescriptor {
-    int seconds, minutes, hours;
+import android.media.TimedMetaData;
 
-    public TimeDescriptor(int seconds, int minutes, int hours) {
-        this.seconds = seconds;
-        this.minutes = minutes;
-        this.hours = hours;
+public class TimeDescriptor {
+    Integer seconds, minutes, hours;
+
+    public TimeDescriptor(Integer seconds, Integer minutes, Integer hours) {
+        this.seconds = seconds == null ? 0 : seconds;
+        this.minutes = minutes == null ? 0 : minutes;
+        this.hours = hours == null ? 0 : hours;
     }
 
     public int getSeconds() {
@@ -25,7 +27,20 @@ public class TimeDescriptor {
         return 60 * 60 * hours + 60 * minutes + seconds;
     }
 
+    public static TimeDescriptor fromMiliseconds(long miliseconds) {
+        int secondsTotal = (int) miliseconds / 1000;
+        int hours = secondsTotal / (60 * 60);
+
+        int remainderMandS = secondsTotal - hours * 60 * 60;
+
+        int minutes = remainderMandS / 60;
+
+        int seconds = remainderMandS - minutes * 60;
+
+        return new TimeDescriptor(seconds, minutes, hours);
+    }
+
     public static TimeDescriptor fromSeconds(int seconds) {
-        return new TimeDescriptor(100, 10, 1);
+        return fromMiliseconds(seconds * 1000);
     }
 }

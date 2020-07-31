@@ -129,8 +129,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 break;
 
             case R.id.nav_btnNewWorkout:
-                fragmentClass = LiveWorkoutFragment.class;
-                break;
+                Intent intent = new Intent(getApplicationContext(), LiveWorkoutActivity.class);
+                startActivity(intent);
+                return true;
 
             case R.id.nav_btnLogout:
                 onLogout();

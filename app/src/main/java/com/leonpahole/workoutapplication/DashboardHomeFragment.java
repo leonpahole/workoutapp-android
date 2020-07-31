@@ -1,6 +1,7 @@
 package com.leonpahole.workoutapplication;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -55,8 +56,8 @@ public class DashboardHomeFragment extends Fragment {
             public void onClick(View v) {
                 Activity activity = getActivity();
                 if (activity instanceof DashboardActivity) {
-                    ((DashboardActivity) getActivity()).inflateLayoutFragment(LiveWorkoutFragment.class);
-                    ((DashboardActivity) getActivity()).selectMenuItem(R.id.nav_btnNewWorkout);
+                    Intent intent = new Intent(getContext(), LiveWorkoutActivity.class);
+                    startActivity(intent);;
                 }
             }
         });

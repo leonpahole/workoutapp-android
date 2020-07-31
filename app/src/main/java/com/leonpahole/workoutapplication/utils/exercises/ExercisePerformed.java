@@ -1,9 +1,5 @@
 package com.leonpahole.workoutapplication.utils.exercises;
 
-import android.content.Context;
-
-import com.leonpahole.workoutapplication.utils.LocalStorage;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

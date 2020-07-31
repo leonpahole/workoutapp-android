@@ -34,6 +34,7 @@ import com.leonpahole.workoutapplication.utils.GsonUtil;
 import com.leonpahole.workoutapplication.utils.LocalStorage;
 import com.leonpahole.workoutapplication.utils.adapters.ExercisesAdapter;
 import com.leonpahole.workoutapplication.utils.exercises.ExercisePerformed;
+import com.leonpahole.workoutapplication.utils.exercises.Workout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,22 +54,34 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
     RecyclerView logWorkout_recExercises;
     RecyclerView.Adapter exercisesAdapter;
 
-    List<ExercisePerformed> exercisesPerformed;
+    Workout workout;
 
     Button logWorkout_btnAddExercise, logWorkout_btnSaveWorkout;
 
     String url = "http://192.168.1.68:8080/api/workout";
     RequestQueue queue;
 
+    int currentEditingPosition = -1;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        exercisesPerformed = new ArrayList<>();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Bundle arguments = getArguments();
+        if (arguments != null && arguments.containsKey("workout")) {
+            workout = GsonUtil.getGsonParser().fromJson(getArguments().getString("workout"), Workout.class);
+        } else {
+            workout = new Workout();
+            workout.setExercisesPerformed(new ArrayList<ExercisePerformed>());
+            workout.setStartDate(new SimpleDateFormat("dd. MM. yyyy").format(new Date()));
+            workout.setEndTime(new SimpleDateFormat("HH:mm").format(new Date()));
+        }
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_log_workout, container, false);
     }
@@ -93,6 +106,10 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         exercisesRecycler();
         addExerciseButton();
         saveWorkoutButton();
+
+        if (workout.getExercisesPerformed().size() > 0) {
+            exercisesAdapter.notifyItemRangeInserted(0, workout.getExercisesPerformed().size());
+        }
     }
 
     private void exercisesRecycler() {
@@ -100,7 +117,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         logWorkout_recExercises.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         // logWorkout_recExercises.setNestedScrollingEnabled(false);
 
-        exercisesAdapter = new ExercisesAdapter(exercisesPerformed, new RecyclerViewOnClickListener() {
+        exercisesAdapter = new ExercisesAdapter(workout.getExercisesPerformed(), new RecyclerViewOnClickListener() {
             @Override
             public void onClick(View view, int position) {
                 onExerciseEdit(position);
@@ -133,7 +150,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
                     return;
                 }
 
-                if (exercisesPerformed.size() == 0) {
+                if (workout.getExercisesPerformed().size() == 0) {
                     new AlertDialog.Builder(getContext())
                             .setTitle("Save without exercises?")
                             .setMessage("Do you want to save the workout without exercises?")
@@ -166,7 +183,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
                     .put("startDate", startDate)
                     .put("startTime", startTime)
                     .put("endTime", endTime)
-                    .put("exercisesPerformed", ExercisePerformed.toJson(exercisesPerformed));
+                    .put("exercisesPerformed", ExercisePerformed.toJson(workout.getExercisesPerformed()));
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                     (Request.Method.POST, url, loginRequest, new Response.Listener<JSONObject>() {
@@ -252,11 +269,12 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
     }
 
     private void onExerciseEdit(int position) {
-        ExercisePerformed exercisePerformed = exercisesPerformed.get(position);
+        ExercisePerformed exercisePerformed = workout.getExercisesPerformed().get(position);
+
+        currentEditingPosition = position;
 
         Bundle bundle = new Bundle();
         bundle.putString("exercisePerformed", GsonUtil.getGsonParser().toJson(exercisePerformed));
-        bundle.putInt("editPosition", position);
 
         NewExerciseDialog newExerciseDialog = new NewExerciseDialog();
         newExerciseDialog.show(getFragmentManager(), "New exercise dialog");
@@ -266,8 +284,9 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
 
     private void dateTimePickers() {
 
-        logWorkout_iptStartDate.getEditText().setText(new SimpleDateFormat("dd. MM. yyyy").format(new Date()));
-        logWorkout_iptEndTime.getEditText().setText(new SimpleDateFormat("HH:mm").format(new Date()));
+        logWorkout_iptStartDate.getEditText().setText(workout.getStartDate());
+        logWorkout_iptStartTime.getEditText().setText(workout.getStartTime());
+        logWorkout_iptEndTime.getEditText().setText(workout.getEndTime());
 
         logWorkout_iptStartDate.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -351,17 +370,18 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
     }
 
     @Override
-    public void applyExercise(ExercisePerformed exercisePerformed, int editPosition) {
-        if (editPosition >= 0) {
+    public void applyExercise(ExercisePerformed exercisePerformed) {
+        if (currentEditingPosition >= 0) {
             // edit
-            exercisesPerformed.set(editPosition, exercisePerformed);
-            exercisesAdapter.notifyItemChanged(editPosition);
+            workout.getExercisesPerformed().set(currentEditingPosition, exercisePerformed);
+            exercisesAdapter.notifyItemChanged(currentEditingPosition);
         } else {
             // add
-            exercisesPerformed.add(exercisePerformed);
-            exercisesAdapter.notifyItemInserted(exercisesPerformed.size() - 1);
+            workout.getExercisesPerformed().add(exercisePerformed);
+            exercisesAdapter.notifyItemInserted(workout.getExercisesPerformed().size() - 1);
         }
 
+        currentEditingPosition = -1;
         clearKeyboard();
     }
 
@@ -372,8 +392,8 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         logWorkout_iptEndTime.getEditText().setText("");
         logWorkout_iptComment.getEditText().setText("");
 
-        int size = exercisesPerformed.size();
-        exercisesPerformed.clear();
+        int size = workout.getExercisesPerformed().size();
+        workout.getExercisesPerformed().clear();
         exercisesAdapter.notifyItemRangeRemoved(0, size);
     }
 

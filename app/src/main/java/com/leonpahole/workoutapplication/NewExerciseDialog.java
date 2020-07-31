@@ -1,6 +1,5 @@
 package com.leonpahole.workoutapplication;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -8,35 +7,27 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.leonpahole.workoutapplication.utils.GsonUtil;
 import com.leonpahole.workoutapplication.utils.LocalStorage;
-import com.leonpahole.workoutapplication.utils.NumericHelper;
 import com.leonpahole.workoutapplication.utils.exercises.Exercise;
 import com.leonpahole.workoutapplication.utils.exercises.ExerciseCategory;
 import com.leonpahole.workoutapplication.utils.exercises.ExercisePerformed;
 import com.leonpahole.workoutapplication.utils.exercises.SetPerformed;
 import com.leonpahole.workoutapplication.utils.exercises.TimeDescriptor;
-import com.leonpahole.workoutapplication.utils.exercises.WeightUnit;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,15 +41,9 @@ public class NewExerciseDialog extends DialogFragment {
 
     private NewExerciseDialogListener listener;
 
-    Integer setLineInputViewId = null;
-
     LinearLayout exerciseDialog_setsLayout;
     Button exerciseDialog_btnAddSet;
     ScrollView exerciseDialog_setsLayoutScroll;
-
-    int editPosition = -1;
-
-    int setCount = 0;
 
     public void setListener(NewExerciseDialogListener listener) {
         this.listener = listener;
@@ -125,24 +110,9 @@ public class NewExerciseDialog extends DialogFragment {
                     exerciseDialog_btnAddSet.setVisibility(View.VISIBLE);
                 }
 
-                switch (exerciseSelected.getCategory()) {
-                    case BODYWEIGHT:
-                        setupBodyweight();
-                        break;
-
-                    case STRENGTH:
-                        setupStrength();
-                        break;
-
-                    case CARDIO:
-                        setupCardio();
-                        break;
-                }
-
                 // clear layout if different category is selected
                 if (exerciseSelected.getCategory() != previousCategory) {
                     exerciseDialog_setsLayout.removeAllViews();
-                    setCount = 0;
 
                     if (exerciseSelected.getCategory() != ExerciseCategory.STRETCHING) {
                         addSetLineInput(null);
@@ -202,36 +172,18 @@ public class NewExerciseDialog extends DialogFragment {
 
                             switch (exerciseSelected.getCategory()) {
                                 case BODYWEIGHT:
-                                    // reps
-                                    EditText setLineInput_iptReps = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptReps)).getEditText();
-                                    Integer repetitions = Integer.parseInt(setLineInput_iptReps.getText().toString());
-
-                                    setPerformed = SetPerformed.bodyweight(repetitions);
+                                    SetLineStrength setLineBodyweight = (SetLineStrength) viewSet;
+                                    setPerformed = SetPerformed.bodyweight(setLineBodyweight.getReps());
                                     break;
 
                                 case STRENGTH:
-                                    // reps
-                                    EditText setLineInput_iptReps2 = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptReps)).getEditText();
-                                    Integer repetitions2 = Integer.parseInt(setLineInput_iptReps2.getText().toString());
-
-                                    EditText setLineInput_iptWeight = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptWeight)).getEditText();
-                                    Double weight = Double.parseDouble(setLineInput_iptWeight.getText().toString());
-
-                                    // todo: weightunit
-                                    setPerformed = SetPerformed.strength(repetitions2, weight, WeightUnit.KILOGRAM);
+                                    SetLineStrength setLineStrength = (SetLineStrength) viewSet;
+                                    setPerformed = SetPerformed.strength(setLineStrength.getReps(), setLineStrength.getWeight());
                                     break;
 
                                 case CARDIO:
-                                    EditText setLineInput_iptTimeHours = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptTimeHours)).getEditText();
-                                    int hours = Integer.parseInt(setLineInput_iptTimeHours.getText().toString());
-
-                                    EditText setLineInput_iptTimeMinutes = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptTimeMinutes)).getEditText();
-                                    int minutes = Integer.parseInt(setLineInput_iptTimeMinutes.getText().toString());
-
-                                    EditText setLineInput_iptTimeSeconds = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptTimeSeconds)).getEditText();
-                                    int seconds = Integer.parseInt(setLineInput_iptTimeSeconds.getText().toString());
-
-                                    setPerformed = SetPerformed.cardio(new TimeDescriptor(seconds, minutes, hours));
+                                    SetLineCardio setLineCardio = (SetLineCardio) viewSet;
+                                    setPerformed = SetPerformed.cardio(setLineCardio.getTime());
                                     break;
 
                                 case STRETCHING:
@@ -245,7 +197,7 @@ public class NewExerciseDialog extends DialogFragment {
                         ExercisePerformed exercisePerformed = new ExercisePerformed(exerciseSelected,
                                 setsPerformed);
 
-                        listener.applyExercise(exercisePerformed, editPosition);
+                        listener.applyExercise(exercisePerformed);
                         dialog.dismiss();
                     }
                 });
@@ -257,33 +209,18 @@ public class NewExerciseDialog extends DialogFragment {
         if (arguments != null) {
 
             String exerciseToEdit_String = arguments.getString("exercisePerformed", null);
-            editPosition = arguments.getInt("editPosition", -1);
 
-            if (exerciseToEdit_String != null && editPosition >= 0) {
+            if (exerciseToEdit_String != null) {
 
                 ExercisePerformed exercisePerformed = GsonUtil.getGsonParser().fromJson(exerciseToEdit_String, ExercisePerformed.class);
                 this.exerciseSelected = exercisePerformed.getExercise();
 
                 exerciseDialog_iptExercise.setText(exerciseSelected.getName());
 
-                switch (exerciseSelected.getCategory()) {
-                    case BODYWEIGHT:
-                        setupBodyweight();
-                        exerciseDialog_btnAddSet.setVisibility(View.VISIBLE);
-                        break;
-
-                    case STRENGTH:
-                        setupStrength();
-                        exerciseDialog_btnAddSet.setVisibility(View.VISIBLE);
-                        break;
-
-                    case CARDIO:
-                        setupCardio();
-                        exerciseDialog_btnAddSet.setVisibility(View.VISIBLE);
-                        break;
-
-                    case STRETCHING:
-                        break;
+                if (exerciseSelected.getCategory() != ExerciseCategory.STRETCHING) {
+                    exerciseDialog_btnAddSet.setVisibility(View.VISIBLE);
+                } else {
+                    exerciseDialog_btnAddSet.setVisibility(View.GONE);
                 }
 
                 List<SetPerformed> setsPerformed = exercisePerformed.getSets();
@@ -319,110 +256,11 @@ public class NewExerciseDialog extends DialogFragment {
 
             switch (exerciseSelected.getCategory()) {
 
-                case BODYWEIGHT:
-                    // reps
-                    EditText setLineInput_iptReps = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptReps)).getEditText();
-                    String repetitionsStr = setLineInput_iptReps.getText().toString();
-                    if (repetitionsStr.isEmpty()) {
-                        setLineInput_iptReps.setError("Enter a value");
-                        isValid = false;
-                    }
-
-                    if (!NumericHelper.isInteger(repetitionsStr)) {
-                        setLineInput_iptReps.setError("Value not a number");
-                        isValid = false;
-                    }
-
-                    if (!isValid) {
-                        resetError((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptReps));
-                    }
-
-                    break;
-
                 case STRENGTH:
-                    // reps
-                    EditText setLineInput_iptReps2 = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptReps)).getEditText();
-                    String repetitionsStr2 = setLineInput_iptReps2.getText().toString();
+                case BODYWEIGHT:
 
-                    if (repetitionsStr2.isEmpty()) {
-                        setLineInput_iptReps2.setError("Enter a value");
-                        isValid = false;
-                    }
-
-                    if (!NumericHelper.isInteger(repetitionsStr2)) {
-                        setLineInput_iptReps2.setError("Value not a number");
-                        isValid = false;
-                    }
-
-                    EditText setLineInput_iptWeight = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptWeight)).getEditText();
-                    String weightStr = setLineInput_iptWeight.getText().toString();
-
-                    if (weightStr.isEmpty()) {
-                        setLineInput_iptWeight.setError("Enter a value");
-                        isValid = false;
-                    }
-
-                    if (!NumericHelper.isDouble(weightStr)) {
-                        setLineInput_iptWeight.setError("Value not a number");
-                        isValid = false;
-                    }
-
-                    if (!isValid) {
-                        resetError((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptReps));
-                        resetError((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptWeight));
-                    }
-
-                    break;
-
-                case CARDIO:
-
-                    // hours
-                    EditText setLineInput_iptTimeHours = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptTimeHours)).getEditText();
-                    String hoursStr = setLineInput_iptTimeHours.getText().toString();
-
-                    if (hoursStr.isEmpty()) {
-                        setLineInput_iptTimeHours.setError("Enter a value");
-                        isValid = false;
-                    }
-
-                    if (!NumericHelper.isInteger(hoursStr)) {
-                        setLineInput_iptTimeHours.setError("Value not a number");
-                        isValid = false;
-                    }
-
-                    // minutes
-                    EditText setLineInput_iptTimeMinutes = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptTimeMinutes)).getEditText();
-                    String minutesStr = setLineInput_iptTimeHours.getText().toString();
-
-                    if (minutesStr.isEmpty()) {
-                        setLineInput_iptTimeMinutes.setError("Enter a value");
-                        isValid = false;
-                    }
-
-                    if (!NumericHelper.isInteger(minutesStr)) {
-                        setLineInput_iptTimeMinutes.setError("Value not a number");
-                        isValid = false;
-                    }
-
-                    // seconds
-                    EditText setLineInput_iptTimeSeconds = ((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptTimeSeconds)).getEditText();
-                    String secondsStr = setLineInput_iptTimeHours.getText().toString();
-
-                    if (secondsStr.isEmpty()) {
-                        setLineInput_iptTimeSeconds.setError("Enter a value");
-                        isValid = false;
-                    }
-
-                    if (!NumericHelper.isInteger(secondsStr)) {
-                        setLineInput_iptTimeSeconds.setError("Value not a number");
-                        isValid = false;
-                    }
-
-                    if (!isValid) {
-                        resetError((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptTimeHours));
-                        resetError((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptTimeMinutes));
-                        resetError((TextInputLayout) viewSet.findViewById(R.id.setLineInput_iptTimeSeconds));
-                    }
+                    SetLineStrength setLineStrength = (SetLineStrength) viewSet;
+                    isValid = setLineStrength.validate();
 
                     break;
             }
@@ -431,122 +269,62 @@ public class NewExerciseDialog extends DialogFragment {
         return isValid;
     }
 
-    private void setupBodyweight() {
-        setLineInputViewId = R.layout.set_line_input_bodyweight;
-    }
-
-    private void setupStrength() {
-        setLineInputViewId = R.layout.set_line_input_strength;
-    }
-
-    private void setupCardio() {
-        setLineInputViewId = R.layout.set_line_input_cardio;
-    }
-
     private void addSetLineInput(SetPerformed set) {
 
-        if (setLineInputViewId == null) {
+        if (exerciseSelected == null) {
             return;
         }
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View v = inflater.inflate(setLineInputViewId, null);
-        exerciseDialog_setsLayout.addView(v);
+        if (exerciseSelected.getCategory() == ExerciseCategory.STRETCHING) {
+            return;
+        }
 
-        if (exerciseSelected.getCategory() != ExerciseCategory.CARDIO) {
-            TextView setLineInput_txtSet = v.findViewById(R.id.setLineInput_txtSet);
-            setLineInput_txtSet.setText("Set " + (setCount + 1));
+        if (exerciseSelected.getCategory() == ExerciseCategory.STRENGTH ||
+                exerciseSelected.getCategory() == ExerciseCategory.BODYWEIGHT) {
 
-            ImageView setLineInput_btnDelete = v.findViewById(R.id.setLineInput_btnDelete);
-            setLineInput_btnDelete.setTag(setCount);
-            setLineInput_btnDelete.setOnClickListener(new View.OnClickListener() {
+            SetLineStrength setLineStrength = new SetLineStrength(getContext());
+            setLineStrength.setSetNumber(exerciseDialog_setsLayout.getChildCount() + 1);
+            setLineStrength.setDeleteListener(new SetLineOnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    int indexToDelete = (int) v.getTag();
+                public void onClick(View view, int setNumber) {
+
+                    int position = setNumber - 1;
 
                     int childCount = exerciseDialog_setsLayout.getChildCount();
 
-                    for (int i = indexToDelete + 1; i < childCount; i++) {
-                        View toModify = exerciseDialog_setsLayout.getChildAt(i);
-                        TextView setLineInput_txtSet = toModify.findViewById(R.id.setLineInput_txtSet);
-                        ImageView setLineInput_btnDelete = toModify.findViewById(R.id.setLineInput_btnDelete);
-                        setLineInput_txtSet.setText("Set " + i);
-                        setLineInput_btnDelete.setTag((i - 1));
+                    for (int i = position + 1; i < childCount; i++) {
+                        SetLineStrength toModify = (SetLineStrength) exerciseDialog_setsLayout.getChildAt(i);
+                        toModify.setSetNumber(i);
                     }
 
-                    setCount = childCount - 1;
-                    exerciseDialog_setsLayout.removeViewAt(indexToDelete);
+                    exerciseDialog_setsLayout.removeViewAt(position);
                 }
             });
 
-            setCount++;
-        }
+            if (exerciseSelected.getCategory() == ExerciseCategory.BODYWEIGHT) {
+                setLineStrength.setBodyweight(true);
+            }
 
-        if (set != null) {
 
-            switch (exerciseSelected.getCategory()) {
-                case BODYWEIGHT:
-                    // reps
-                    EditText setLineInput_iptReps = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptReps)).getEditText();
-                    setLineInput_iptReps.setText(set.getRepetitions().toString());
-                    break;
+            if (set != null) {
+                setLineStrength.setReps(set.getRepetitions());
+                setLineStrength.setWeight(set.getWeight());
+            }
 
-                case STRENGTH:
-                    // reps
-                    EditText setLineInput_iptReps2 = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptReps)).getEditText();
-                    setLineInput_iptReps2.setText(set.getRepetitions().toString());
+            exerciseDialog_setsLayout.addView(setLineStrength);
+        } else {
+            SetLineCardio setLineCardio = new SetLineCardio(getContext());
+            exerciseDialog_setsLayout.addView(setLineCardio);
 
-                    EditText setLineInput_iptWeight = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptWeight)).getEditText();
-                    setLineInput_iptWeight.setText(set.getWeight().toString());
-                    break;
-
-                case CARDIO:
-                    EditText setLineInput_iptTimeHours = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptTimeHours)).getEditText();
-                    setLineInput_iptTimeHours.setText(set.getTime().getHours() + "");
-
-                    EditText setLineInput_iptTimeMinutes = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptTimeMinutes)).getEditText();
-                    setLineInput_iptTimeMinutes.setText(set.getTime().getMinutes() + "");
-
-                    EditText setLineInput_iptTimeSeconds = ((TextInputLayout) v.findViewById(R.id.setLineInput_iptTimeSeconds)).getEditText();
-                    setLineInput_iptTimeSeconds.setText(set.getTime().getSeconds() + "");
-
-                    break;
-
-                case STRETCHING:
-                    break;
+            if (set != null) {
+                setLineCardio.setHours(set.getTime().getHours());
+                setLineCardio.setMinutes(set.getTime().getMinutes());
+                setLineCardio.setSeconds(set.getTime().getSeconds());
             }
         }
     }
 
     public interface NewExerciseDialogListener {
-        void applyExercise(ExercisePerformed exercisePerformed, int editPosition);
-    }
-
-    private Integer lastEditTextIdInSetLine(ExerciseCategory category) {
-        switch (category) {
-            case CARDIO:
-                return R.id.setLineInput_iptTimeSeconds;
-
-            case STRENGTH:
-            case BODYWEIGHT:
-                return R.id.setLineInput_iptWeight;
-        }
-
-        return null;
-    }
-
-    private Integer firstEditTextIdInSetLine(ExerciseCategory category) {
-        switch (category) {
-            case CARDIO:
-                return R.id.setLineInput_iptTimeHours;
-
-            case STRENGTH:
-                return R.id.setLineInput_iptWeight;
-
-            case BODYWEIGHT:
-                return R.id.setLineInput_iptReps;
-        }
-
-        return null;
+        void applyExercise(ExercisePerformed exercisePerformed);
     }
 }

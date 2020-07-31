@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:orientation="vertical"
+    android:padding="15dp"
+    tools:context=".SelectExerciseFragment">
+
+    <TextView
+        android:id="@+id/liveWorkoutSelect_txtSelectExercise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/muli_extralight"
+        android:text="Select exercise #1"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="40sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/liveWorkoutSelect_iptExerciseLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:hint="Exercise"
+        app:boxStrokeColor="@color/colorPrimaryDark"
+        app:boxStrokeWidthFocused="2dp">
+
+        <AutoCompleteTextView
+            android:id="@+id/liveWorkoutSelect_iptExercise"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:id="@+id/liveWorkoutSelect_layoutStrengthBodyweight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/liveWorkoutSelect_iptWeight"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Weight"
+            app:boxStrokeColor="@color/colorPrimaryDark"
+            app:boxStrokeWidthFocused="2dp"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <CheckBox
+            android:id="@+id/liveWorkoutSelect_chkCountdownRest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Count down rest" />
+
+
+        <LinearLayout
+            android:id="@+id/liveWorkout_layoutRestTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.leonpahole.workoutapplication.DurationPicker
+                android:id="@+id/liveWorkout_restDurationPicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/liveWorkoutSelect_layoutCardio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <CheckBox
+            android:id="@+id/liveWorkoutSelect_chkCountdownCardioTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Count down time" />
+
+
+        <LinearLayout
+            android:id="@+id/liveWorkout_layoutCardioTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.leonpahole.workoutapplication.DurationPicker
+                android:id="@+id/liveWorkout_cardioDurationPicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/liveWorkoutSelect_btnSelect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:background="@color/colorPrimary"
+        android:text="Select"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+
+</LinearLayout>

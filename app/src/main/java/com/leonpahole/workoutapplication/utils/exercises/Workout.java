@@ -25,8 +25,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
-@Data
 @NoArgsConstructor
+@Data
 @Builder
 public class Workout {
     long id;
