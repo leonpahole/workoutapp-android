@@ -4,25 +4,31 @@ import com.google.gson.annotations.SerializedName;
 
 public enum ExerciseCategory {
     @SerializedName("STR")
-    STRENGTH("STR"),
+    STRENGTH("STR", "STRENGTH"),
 
     @SerializedName("BW")
-    BODYWEIGHT("BW"),
+    BODYWEIGHT("BW", "BODYWEIGHT"),
 
     @SerializedName("ST")
-    STRETCHING("ST"),
+    STRETCHING("ST", "STRETCHING"),
 
     @SerializedName("CA")
-    CARDIO("CA");
+    CARDIO("CA", "CARDIO");
 
     private String code;
+    private String name;
 
-    ExerciseCategory(String code) {
+    ExerciseCategory(String code, String name) {
         this.code = code;
+        this.name = name;
     }
 
     public String getCode() {
         return code;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public static ExerciseCategory of(String code) {

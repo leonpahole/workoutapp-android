@@ -11,7 +11,7 @@
 
 # Second iteration
 
-- Live workout
+- Live workout YES
 - Exercise browser
 - Profile
 

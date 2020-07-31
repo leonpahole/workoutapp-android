@@ -133,6 +133,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 startActivity(intent);
                 return true;
 
+            case R.id.nav_btnBrowseExercises:
+                fragmentClass = ExerciseListFragment.class;
+                break;
+
             case R.id.nav_btnLogout:
                 onLogout();
                 return false;
