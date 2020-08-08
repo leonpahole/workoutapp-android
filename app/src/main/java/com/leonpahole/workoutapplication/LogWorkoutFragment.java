@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -53,6 +54,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
             logWorkout_iptName, logWorkout_iptComment;
     RecyclerView logWorkout_recExercises;
     RecyclerView.Adapter exercisesAdapter;
+    CheckBox logWorkout_chkSaveAsTemplate;
 
     Workout workout;
 
@@ -101,6 +103,8 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         logWorkout_recExercises = view.findViewById(R.id.logWorkout_recExercises);
         logWorkout_btnAddExercise = view.findViewById(R.id.logWorkout_btnAddExercise);
         logWorkout_btnSaveWorkout = view.findViewById(R.id.logWorkout_btnSaveWorkout);
+
+        logWorkout_chkSaveAsTemplate = view.findViewById(R.id.logWorkout_chkSaveAsTemplate);
 
         dateTimePickers();
         exercisesRecycler();
@@ -175,6 +179,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
         String startDate = logWorkout_iptStartDate.getEditText().getText().toString().trim();
         String startTime = logWorkout_iptStartTime.getEditText().getText().toString().trim();
         String endTime = logWorkout_iptEndTime.getEditText().getText().toString().trim();
+        boolean saveAsTemplate = logWorkout_chkSaveAsTemplate.isChecked();
 
         try {
             final JSONObject loginRequest = new JSONObject()
@@ -183,6 +188,7 @@ public class LogWorkoutFragment extends Fragment implements NewExerciseDialog.Ne
                     .put("startDate", startDate)
                     .put("startTime", startTime)
                     .put("endTime", endTime)
+                    .put("saveAsTemplate", saveAsTemplate)
                     .put("exercisesPerformed", ExercisePerformed.toJson(workout.getExercisesPerformed()));
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest

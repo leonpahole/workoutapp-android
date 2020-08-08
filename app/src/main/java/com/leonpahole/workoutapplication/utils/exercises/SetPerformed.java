@@ -39,6 +39,14 @@ public class SetPerformed {
         return new SetPerformed(null, null, null, time);
     }
 
+    public static SetPerformed timed(TimeDescriptor time) {
+        return new SetPerformed(null, null, null, time);
+    }
+
+    public static SetPerformed weightedTimed(TimeDescriptor time, Double weight) {
+        return new SetPerformed(null, weight, WeightUnit.KILOGRAM, time);
+    }
+
     @NonNull
     @Override
     public String toString() {

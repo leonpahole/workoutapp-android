@@ -16,6 +16,15 @@
         android:textColor="@color/colorPrimary"
         android:textSize="30sp" />
 
+    <TextView
+        android:id="@+id/workoutHistory_txtNoWorkouts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="No workout yet."
+        android:textAlignment="center"
+        android:visibility="gone" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/workoutHistory_recWorkouts"

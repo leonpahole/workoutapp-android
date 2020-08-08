@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -34,6 +35,8 @@ public class WorkoutHistoryFragment extends Fragment {
 
     RecyclerView workoutHistory_recWorkouts;
     RecyclerView.Adapter workoutsAdapter;
+
+    TextView workoutHistory_txtNoWorkouts;
 
     List<Workout> workouts;
 
@@ -60,6 +63,7 @@ public class WorkoutHistoryFragment extends Fragment {
         queue = Volley.newRequestQueue(getContext());
 
         workoutHistory_recWorkouts = view.findViewById(R.id.workoutHistory_recWorkouts);
+        workoutHistory_txtNoWorkouts = view.findViewById(R.id.workoutHistory_txtNoWorkouts);
 
         workoutsRecycler();
         fetchWorkouts();
@@ -92,6 +96,10 @@ public class WorkoutHistoryFragment extends Fragment {
 
                         workouts.addAll(Workout.fromJson(getContext(), response));
                         workoutsAdapter.notifyItemRangeChanged(0, workouts.size());
+
+                        if (workouts.isEmpty()) {
+                            workoutHistory_txtNoWorkouts.setVisibility(View.VISIBLE);
+                        }
                     }
                 }, new Response.ErrorListener() {
 

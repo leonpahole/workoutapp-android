@@ -1,12 +1,14 @@
 package com.leonpahole.workoutapplication;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -43,6 +45,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     String url = "http://192.168.1.68:8080/api/exercise";
 
     private static final float END_SCALE = 1.0f;
+
+    Class currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +109,41 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         if (dashboard_drawerLayout.isDrawerVisible(GravityCompat.START)) {
             dashboard_drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
+            boolean showDialog = false;
+            String dialogTitle = "", dialogMessage = "", positiveButton = "Yes", negativeButton = "No";
+
+            if (currentFragment == DashboardHomeFragment.class) {
+                super.onBackPressed();
+            } else if (currentFragment == LogWorkoutFragment.class) {
+
+                showDialog = true;
+                dialogTitle = "Quit log?";
+                dialogMessage = "Quit logging this workout?";
+
+            } else {
+                dashboard_navigationView.setCheckedItem(R.id.nav_btnHome);
+                inflateLayoutFragment(DashboardHomeFragment.class);
+            }
+
+            if (showDialog) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+                builder.setCancelable(true);
+                builder.setTitle(dialogTitle);
+                builder.setMessage(dialogMessage);
+                builder.setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dashboard_navigationView.setCheckedItem(R.id.nav_btnHome);
+                        inflateLayoutFragment(DashboardHomeFragment.class);
+                    }
+                });
+
+                builder.setNegativeButton(negativeButton, null);
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
         }
     }
 
@@ -154,6 +192,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     public void inflateLayoutFragment(Class fragmentClass) {
         try {
+            currentFragment = fragmentClass;
             Fragment fragment = (Fragment) fragmentClass.newInstance();
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.dashboard_frameLayout, fragment).commit();
@@ -167,7 +206,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     }
 
     private void onLogout() {
-        LocalStorage.saveJwt(getApplicationContext(), null);
+        LocalStorage.saveJwt(getApplicationContext(), null, null);
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -184,7 +223,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                         @Override
                         public void onResponse(JSONArray response) {
 
-                            LocalStorage.saveExercises(getApplicationContext(), response);
+                            LocalStorage.saveExercises(getApplicationContext(),
+                                    response);
 
                         }
                     }, new Response.ErrorListener() {

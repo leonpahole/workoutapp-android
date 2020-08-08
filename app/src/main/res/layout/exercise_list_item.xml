@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp">
 
     <LinearLayout
         android:id="@+id/exerciseListItem_layoutWrapper"
@@ -10,15 +11,42 @@
         android:background="@color/colorPrimary"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/exerciseListItem_name"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/muli_extralight"
-            android:padding="10dp"
-            android:text="Exercise name"
-            android:textColor="@color/white"
-            android:textSize="25dp" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/exerciseListItem_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/muli_extralight"
+                android:padding="10dp"
+                android:text="Exercise name"
+                android:textColor="@color/white"
+                android:textSize="25dp" />
+
+
+            <ImageView
+                android:id="@+id/exerciseListItem_btnEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:layout_toLeftOf="@+id/exerciseListItem_btnDelete"
+                android:src="@drawable/ic_edit"
+                android:tint="@color/white" />
+
+            <ImageView
+                android:id="@+id/exerciseListItem_btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_delete"
+                android:tint="@color/white" />
+
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

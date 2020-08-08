@@ -1,5 +1,7 @@
 package com.leonpahole.workoutapplication.utils.exercises;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 public enum ExerciseCategory {
@@ -13,7 +15,13 @@ public enum ExerciseCategory {
     STRETCHING("ST", "STRETCHING"),
 
     @SerializedName("CA")
-    CARDIO("CA", "CARDIO");
+    CARDIO("CA", "CARDIO"),
+
+    @SerializedName("TIM")
+    TIMED("TIM", "TIMED"),
+
+    @SerializedName("WTIM")
+    WEIGHTED_TIMED("WTIM", "WEIGHTED TIMED");
 
     private String code;
     private String name;
@@ -39,5 +47,12 @@ public enum ExerciseCategory {
         }
 
         return null;
+    }
+
+
+    @NonNull
+    @Override
+    public String toString() {
+        return name;
     }
 }

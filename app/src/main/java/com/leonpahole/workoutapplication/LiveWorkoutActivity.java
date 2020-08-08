@@ -1,5 +1,7 @@
 package com.leonpahole.workoutapplication;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -29,8 +31,11 @@ import com.leonpahole.workoutapplication.utils.exercises.Workout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -50,6 +55,7 @@ public class LiveWorkoutActivity extends AppCompatActivity implements SelectExer
     static class CurrentSetData {
         TimeDescriptor restTime;
         TimeDescriptor cardioTime;
+        TimeDescriptor timedTime;
         Double weight;
     }
 
@@ -82,6 +88,11 @@ public class LiveWorkoutActivity extends AppCompatActivity implements SelectExer
 
                         liveWorkout_btnEndWorkout.setVisibility(View.GONE);
 
+                        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.liveWorkout_frameLayout);
+                        if (SetFragment.class.isInstance(currentFragment)) {
+                            ((SetFragment) currentFragment).endExercise();
+                        }
+
                         Bundle bundle = new Bundle();
                         workout.setEndTime(new SimpleDateFormat("HH:mm").format(new Date()));
                         bundle.putString("workout", GsonUtil.getGsonParser().toJson(workout));
@@ -89,12 +100,7 @@ public class LiveWorkoutActivity extends AppCompatActivity implements SelectExer
                     }
                 });
 
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
+                builder.setNegativeButton("No", null);
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
@@ -127,12 +133,7 @@ public class LiveWorkoutActivity extends AppCompatActivity implements SelectExer
             }
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
+        builder.setNegativeButton("No", null);
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -165,7 +166,18 @@ public class LiveWorkoutActivity extends AppCompatActivity implements SelectExer
         Bundle bundle = new Bundle();
         bundle.putString("exercise", GsonUtil.getGsonParser().toJson(exercise));
         bundle.putString("setData", GsonUtil.getGsonParser().toJson(currentSetData));
-        inflateLayoutFragment(LiveSetFragment.class, bundle);
+
+        if (exercise.getCategory() == ExerciseCategory.STRENGTH ||
+                exercise.getCategory() == ExerciseCategory.BODYWEIGHT) {
+            inflateLayoutFragment(LiveSetFragment.class, bundle);
+        } else if (exercise.getCategory() == ExerciseCategory.TIMED ||
+                exercise.getCategory() == ExerciseCategory.WEIGHTED_TIMED) {
+            inflateLayoutFragment(TimedSetFragment.class, bundle);
+        } else if (exercise.getCategory() == ExerciseCategory.CARDIO) {
+            inflateLayoutFragment(LiveCardioFragment.class, bundle);
+        } else if (exercise.getCategory() == ExerciseCategory.STRETCHING) {
+            onExerciseEnd(exercise, new ArrayList<SetPerformed>());
+        }
     }
 
     public void onExerciseEnd(Exercise exercise, List<SetPerformed> setsPerformed) {

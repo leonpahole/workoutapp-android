@@ -1,10 +1,12 @@
 package com.leonpahole.workoutapplication;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.os.CountDownTimer;
@@ -26,7 +28,7 @@ import com.leonpahole.workoutapplication.utils.exercises.TimeDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LiveSetFragment extends Fragment {
+public class LiveSetFragment extends Fragment implements SetFragment {
 
     TextView liveSet_txtName, liveSet_txtSetNumber;
     LinearLayout liveSet_layoutTimer, liveSet_layoutFinishSet, liveSet_layoutSetList,
@@ -95,31 +97,50 @@ public class LiveSetFragment extends Fragment {
         liveSet_btnEndExercise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LiveWorkoutActivity activity = (LiveWorkoutActivity) getActivity();
 
-                List<SetPerformed> setsPerformed = new ArrayList<>();
-
-                boolean isValid = true;
-
-                for (int i = 0; i < liveSet_layoutSetList.getChildCount(); i++) {
-                    SetLineStrength setLine = (SetLineStrength) liveSet_layoutSetList.getChildAt(i);
-
-                    boolean setIsValid = setLine.validate();
-
-                    if (isValid) {
-                        isValid = setIsValid;
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setCancelable(true);
+                builder.setTitle("End exercise?");
+                builder.setMessage("End exercise " + exercise.getName() + "?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        endExercise();
                     }
+                });
 
-                    setsPerformed.add(setLine.getSetPerformed());
-                }
+                builder.setNegativeButton("No", null);
 
-                if (!isValid) {
-                    return;
-                }
-
-                activity.onExerciseEnd(exercise, setsPerformed);
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
+    }
+
+    public void endExercise() {
+        LiveWorkoutActivity activity = (LiveWorkoutActivity) getActivity();
+
+        List<SetPerformed> setsPerformed = new ArrayList<>();
+
+        boolean isValid = true;
+
+        for (int i = 0; i < liveSet_layoutSetList.getChildCount(); i++) {
+            SetLineStrength setLine = (SetLineStrength) liveSet_layoutSetList.getChildAt(i);
+
+            boolean setIsValid = setLine.validate();
+
+            if (!setIsValid) {
+                isValid = false;
+            } else {
+                setsPerformed.add(setLine.getSetPerformed());
+            }
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        activity.onExerciseEnd(exercise, setsPerformed);
     }
 
     private void clearKeyboard() {
@@ -138,7 +159,7 @@ public class LiveSetFragment extends Fragment {
             if (currentSetData.getWeight() != null) {
                 setLine.setWeight(currentSetData.getWeight());
             }
-        } else if (exercise.getCategory() == ExerciseCategory.STRETCHING) {
+        } else if (exercise.getCategory() == ExerciseCategory.BODYWEIGHT) {
             setLine.setBodyweight(true);
         }
 

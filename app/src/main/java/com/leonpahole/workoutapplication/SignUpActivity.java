@@ -24,7 +24,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputLayout;
+import com.leonpahole.workoutapplication.utils.GsonUtil;
 import com.leonpahole.workoutapplication.utils.LocalStorage;
+import com.leonpahole.workoutapplication.utils.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,13 +103,13 @@ public class SignUpActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        if (response.isNull("token")) {
+                        if (response.isNull("token") || response.isNull("user")) {
                             Toast.makeText(getApplicationContext(), "Missing data error has occured", Toast.LENGTH_LONG).show();
                         } else {
 
                             try {
                                 String token = response.getString("token");
-                                LocalStorage.saveJwt(getApplicationContext(), token);
+                                LocalStorage.saveJwt(getApplicationContext(), token, response.getJSONObject("user"));
 
                                 Toast.makeText(getApplicationContext(), "Welcome, " + name + "!", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);

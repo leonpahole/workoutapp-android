@@ -109,6 +109,33 @@
         </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/liveWorkoutSelect_layoutTimed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <CheckBox
+            android:id="@+id/liveWorkoutSelect_chkTimedCountdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Count down time" />
+
+
+        <LinearLayout
+            android:id="@+id/liveWorkoutSelect_layoutTimedTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.leonpahole.workoutapplication.DurationPicker
+                android:id="@+id/liveWorkoutSelect_timedDurationPicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </LinearLayout>
+
     <Button
         android:id="@+id/liveWorkoutSelect_btnSelect"
         android:layout_width="match_parent"

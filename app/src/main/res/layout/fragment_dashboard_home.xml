@@ -8,19 +8,19 @@
     tools:context=".DashboardHomeFragment">
 
     <TextView
+        android:id="@+id/dashboardHome_txtGreeting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/muli_extralight"
-        android:text="Good morning, Leon"
         android:textAlignment="center"
         android:textColor="@color/colorPrimary"
         android:textSize="40sp" />
 
     <TextView
+        android:id="@+id/dashboardHome_txtGreetingDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/muli_extralight"
-        android:text="We hope you have a productive day."
         android:textAlignment="center"
         android:textSize="20sp" />
 
@@ -54,6 +54,15 @@
             android:layout_marginTop="10dp"
             android:background="@color/colorPrimary"
             android:text="Workout history"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/dashboardHome_btnExerciseList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorPrimary"
+            android:text="Exercise list"
             android:textColor="@color/white" />
 
     </LinearLayout>

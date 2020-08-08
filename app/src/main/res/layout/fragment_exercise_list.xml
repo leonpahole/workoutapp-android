@@ -20,7 +20,7 @@
         android:id="@+id/exerciseList_btnAddExercise"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:background="@color/colorPrimary"
         android:text="Add an exercise"
         android:textColor="@color/white" />

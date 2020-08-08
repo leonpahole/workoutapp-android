@@ -21,7 +21,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
+import com.leonpahole.workoutapplication.utils.GsonUtil;
 import com.leonpahole.workoutapplication.utils.LocalStorage;
+import com.leonpahole.workoutapplication.utils.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -131,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Welcome, " + name + "!", Toast.LENGTH_LONG).show();
 
                                 String token = response.getString("token");
-                                LocalStorage.saveJwt(getApplicationContext(), token);
+                                LocalStorage.saveJwt(getApplicationContext(), token, response.getJSONObject("user"));
 
                                 Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

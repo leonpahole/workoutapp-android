@@ -189,6 +189,17 @@ public class NewExerciseDialog extends DialogFragment {
                                 case STRETCHING:
                                     setPerformed = SetPerformed.stretching();
                                     break;
+
+                                case TIMED:
+                                case WEIGHTED_TIMED:
+                                    SetLineTimed setLineTimed = (SetLineTimed) viewSet;
+                                    if (setLineTimed.isBodyweight()) {
+                                        setPerformed = SetPerformed.timed(setLineTimed.getTime());
+                                    } else {
+                                        setPerformed = SetPerformed.weightedTimed(setLineTimed.getTime(), setLineTimed.getWeight());
+                                    }
+                                    break;
+
                             }
 
                             setsPerformed.add(setPerformed);
@@ -312,7 +323,7 @@ public class NewExerciseDialog extends DialogFragment {
             }
 
             exerciseDialog_setsLayout.addView(setLineStrength);
-        } else {
+        } else if (exerciseSelected.getCategory() == ExerciseCategory.CARDIO) {
             SetLineCardio setLineCardio = new SetLineCardio(getContext());
             exerciseDialog_setsLayout.addView(setLineCardio);
 
@@ -320,6 +331,19 @@ public class NewExerciseDialog extends DialogFragment {
                 setLineCardio.setHours(set.getTime().getHours());
                 setLineCardio.setMinutes(set.getTime().getMinutes());
                 setLineCardio.setSeconds(set.getTime().getSeconds());
+            }
+        } else if (exerciseSelected.getCategory() == ExerciseCategory.TIMED ||
+                exerciseSelected.getCategory() == ExerciseCategory.WEIGHTED_TIMED) {
+            SetLineTimed setLineTimed = new SetLineTimed(getContext());
+            exerciseDialog_setsLayout.addView(setLineTimed);
+
+            if (exerciseSelected.getCategory() == ExerciseCategory.TIMED) {
+                setLineTimed.setBodyweight(true);
+            }
+
+            if (set != null) {
+                setLineTimed.setTime(new TimeDescriptor(set.getTime().getSeconds(),
+                        set.getTime().getMinutes(), set.getTime().getHours()));
             }
         }
     }

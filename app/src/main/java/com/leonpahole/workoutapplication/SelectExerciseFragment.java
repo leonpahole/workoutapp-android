@@ -41,13 +41,16 @@ public class SelectExerciseFragment extends Fragment {
 
     TextView liveWorkoutSelect_txtSelectExercise;
     TextInputLayout liveWorkoutSelect_iptExerciseLayout, liveWorkoutSelect_iptWeight;
-    CheckBox liveWorkoutSelect_chkCountdownRest, liveWorkoutSelect_chkCountdownCardioTime;
+    CheckBox liveWorkoutSelect_chkCountdownRest, liveWorkoutSelect_chkCountdownCardioTime,
+            liveWorkoutSelect_chkTimedCountdown;
     AutoCompleteTextView liveWorkoutSelect_iptExercise;
     Button liveWorkoutSelect_btnSelect;
-    DurationPicker liveWorkout_restDurationPicker, liveWorkout_cardioDurationPicker;
+    DurationPicker liveWorkout_restDurationPicker, liveWorkout_cardioDurationPicker,
+            liveWorkoutSelect_timedDurationPicker;
 
     View liveWorkoutSelect_layoutStrengthBodyweight, liveWorkoutSelect_layoutCardio,
-            liveWorkout_layoutRestTime, liveWorkout_layoutCardioTime;
+            liveWorkout_layoutRestTime, liveWorkout_layoutCardioTime, liveWorkoutSelect_layoutTimed,
+            liveWorkoutSelect_layoutTimedTime;
 
     private ArrayList<Exercise> exercises;
     Exercise exerciseSelected = null;
@@ -93,6 +96,10 @@ public class SelectExerciseFragment extends Fragment {
 
         liveWorkoutSelect_chkCountdownRest = view.findViewById(R.id.liveWorkoutSelect_chkCountdownRest);
         liveWorkoutSelect_chkCountdownCardioTime = view.findViewById(R.id.liveWorkoutSelect_chkCountdownCardioTime);
+        liveWorkoutSelect_chkTimedCountdown = view.findViewById(R.id.liveWorkoutSelect_chkTimedCountdown);
+        liveWorkoutSelect_layoutTimedTime = view.findViewById(R.id.liveWorkoutSelect_layoutTimedTime);
+
+        liveWorkoutSelect_timedDurationPicker = view.findViewById(R.id.liveWorkoutSelect_timedDurationPicker);
 
         liveWorkoutSelect_iptExercise = view.findViewById(R.id.liveWorkoutSelect_iptExercise);
 
@@ -102,6 +109,7 @@ public class SelectExerciseFragment extends Fragment {
         liveWorkoutSelect_layoutCardio = view.findViewById(R.id.liveWorkoutSelect_layoutCardio);
         liveWorkout_layoutRestTime = view.findViewById(R.id.liveWorkout_layoutRestTime);
         liveWorkout_layoutCardioTime = view.findViewById(R.id.liveWorkout_layoutCardioTime);
+        liveWorkoutSelect_layoutTimed = view.findViewById(R.id.liveWorkoutSelect_layoutTimed);
 
         liveWorkout_restDurationPicker = view.findViewById(R.id.liveWorkout_restDurationPicker);
         liveWorkout_cardioDurationPicker = view.findViewById(R.id.liveWorkout_cardioDurationPicker);
@@ -159,10 +167,32 @@ public class SelectExerciseFragment extends Fragment {
                                     liveWorkout_cardioDurationPicker.getHours());
 
                             if (cardioTime.toSeconds() > 0) {
-                                currentSetData.setRestTime(cardioTime);
+                                currentSetData.setCardioTime(cardioTime);
                             }
                         }
                         break;
+
+                    case WEIGHTED_TIMED:
+                    case TIMED:
+                        if (exerciseSelected.getCategory() == ExerciseCategory.WEIGHTED_TIMED) {
+
+                            String weightStr = liveWorkoutSelect_iptWeight.getEditText().getText().toString().trim();
+
+                            if (!weightStr.isEmpty()) {
+                                currentSetData.setWeight(Double.parseDouble(weightStr));
+                            }
+                        }
+
+                        if (liveWorkoutSelect_chkTimedCountdown.isChecked()) {
+
+                            TimeDescriptor timeDuration = new TimeDescriptor(liveWorkoutSelect_timedDurationPicker.getSeconds(),
+                                    liveWorkoutSelect_timedDurationPicker.getMinutes(),
+                                    liveWorkoutSelect_timedDurationPicker.getHours());
+
+                            if (timeDuration.toSeconds() > 0) {
+                                currentSetData.setTimedTime(timeDuration);
+                            }
+                        }
                 }
 
                 onExerciseSelectListener.onExerciseSelect(exerciseSelected, currentSetData);
@@ -216,6 +246,14 @@ public class SelectExerciseFragment extends Fragment {
                         case CARDIO:
                             showCardio();
                             break;
+
+                        case WEIGHTED_TIMED:
+                            showWeightedTimed();
+                            break;
+
+                        case TIMED:
+                            showTimed();
+                            break;
                     }
                 }
 
@@ -250,14 +288,27 @@ public class SelectExerciseFragment extends Fragment {
                 }
             }
         });
+
+        liveWorkoutSelect_chkTimedCountdown.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    liveWorkoutSelect_layoutTimedTime.setVisibility(View.VISIBLE);
+                } else {
+                    liveWorkoutSelect_layoutTimedTime.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     private void hideEverything() {
         liveWorkoutSelect_layoutStrengthBodyweight.setVisibility(View.GONE);
         liveWorkoutSelect_iptWeight.setVisibility(View.GONE);
         liveWorkout_layoutRestTime.setVisibility(View.GONE);
+        liveWorkoutSelect_layoutTimedTime.setVisibility(View.GONE);
         liveWorkoutSelect_layoutCardio.setVisibility(View.GONE);
         liveWorkout_layoutCardioTime.setVisibility(View.GONE);
+        liveWorkoutSelect_layoutTimed.setVisibility(View.GONE);
     }
 
     private void showCardio() {
@@ -267,10 +318,19 @@ public class SelectExerciseFragment extends Fragment {
     private void showStrength() {
         liveWorkoutSelect_layoutStrengthBodyweight.setVisibility(View.VISIBLE);
         liveWorkoutSelect_iptWeight.setVisibility(View.VISIBLE);
-
     }
 
     private void showBodyweight() {
         liveWorkoutSelect_layoutStrengthBodyweight.setVisibility(View.VISIBLE);
+    }
+
+    private void showWeightedTimed() {
+        liveWorkoutSelect_layoutTimed.setVisibility(View.VISIBLE);
+        liveWorkoutSelect_iptWeight.setVisibility(View.VISIBLE);
+    }
+
+    private void showTimed() {
+        liveWorkoutSelect_layoutTimed.setVisibility(View.VISIBLE);
+        liveWorkoutSelect_iptWeight.setVisibility(View.GONE);
     }
 }

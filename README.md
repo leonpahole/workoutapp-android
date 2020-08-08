@@ -12,16 +12,23 @@
 # Second iteration
 
 - Live workout YES
-- Exercise browser
+- Exercise browser YES
+- Cardio workout (separate and together) YES
+- Stretching workout YES
+- Timed and timed + weight exercises
+- Finish set when ending workout YES
 - Profile
+- Forgot password
 
 # Third iteration
 
+- Nicer dashboard
 - Templates
-- Statistics
+- Deployment
 
 # Fourth iteration
 
+- Statistics
 - Refactoring
 
 # Fifth iteration
